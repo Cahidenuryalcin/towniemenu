@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-export const dynamic = "force-dynamic"; // fiyat değişikliği anında yansısın
+export const dynamic = "force-dynamic";
 
 type Row = {
   category_name: string;
@@ -13,12 +13,14 @@ type Row = {
   available: boolean | null;
 };
 
-export default async function BranchMenu({ params }: { params: { branch: string } }) {
+export default async function BranchMenu({ params }: { params: any }) {
   const { branch } = params;
 
   const { data, error } = await supabase
     .from("v_menu_items")
-    .select("category_name,item_id,item_name,item_desc,price,currency,variant,available")
+    .select(
+      "category_name,item_id,item_name,item_desc,price,currency,variant,available"
+    )
     .eq("branch_slug", branch)
     .order("category_name", { ascending: true });
 
@@ -26,9 +28,8 @@ export default async function BranchMenu({ params }: { params: { branch: string 
     return <main className="p-6 text-red-600">Hata: {error.message}</main>;
   }
 
-  // kategoriye göre grupla
   const groups = new Map<string, Row[]>();
-  (data || []).forEach((row) => {
+  (data || []).forEach((row: any) => {
     const key = row.category_name || "Diğer";
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(row as Row);
@@ -56,13 +57,19 @@ export default async function BranchMenu({ params }: { params: { branch: string 
                   <h3 className="font-semibold">
                     {it.item_name}
                     {it.available === false && (
-                      <span className="ml-2 text-xs rounded bg-gray-100 px-2 py-0.5">Mevcut değil</span>
+                      <span className="ml-2 text-xs rounded bg-gray-100 px-2 py-0.5">
+                        Mevcut değil
+                      </span>
                     )}
                     {it.variant && (
-                      <span className="ml-2 text-xs rounded bg-gray-100 px-2 py-0.5">{it.variant}</span>
+                      <span className="ml-2 text-xs rounded bg-gray-100 px-2 py-0.5">
+                        {it.variant}
+                      </span>
                     )}
                   </h3>
-                  {it.item_desc && <p className="text-sm text-gray-600">{it.item_desc}</p>}
+                  {it.item_desc && (
+                    <p className="text-sm text-gray-600">{it.item_desc}</p>
+                  )}
                 </div>
                 <div className="font-bold whitespace-nowrap">
                   {it.price != null ? `${it.price} ${it.currency || "TRY"}` : "-"}
