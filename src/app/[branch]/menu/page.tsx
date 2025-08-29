@@ -13,8 +13,10 @@ type Row = {
   available: boolean | null;
 };
 
-export default async function BranchMenu({ params }: { params: any }) {
-  const { branch } = params;
+export default async function BranchMenu({
+  params,
+}: { params: Promise<{ branch: string }> }) {
+  const { branch } = await params;
 
   const { data, error } = await supabase
     .from("v_menu_items")
@@ -28,12 +30,13 @@ export default async function BranchMenu({ params }: { params: any }) {
     return <main className="p-6 text-red-600">Hata: {error.message}</main>;
   }
 
+  const rows: Row[] = (data ?? []) as Row[];
   const groups = new Map<string, Row[]>();
-  (data || []).forEach((row: any) => {
+  for (const row of rows) {
     const key = row.category_name || "Diğer";
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(row as Row);
-  });
+    groups.get(key)!.push(row);
+  }
 
   return (
     <main className="mx-auto max-w-2xl p-6">
@@ -42,7 +45,7 @@ export default async function BranchMenu({ params }: { params: any }) {
         <p className="text-sm text-gray-200">Klasik banner alanı</p>
       </div>
 
-      {(!data || data.length === 0) && <p>Henüz ürün yok.</p>}
+      {rows.length === 0 && <p>Henüz ürün yok.</p>}
 
       {[...groups.entries()].map(([cat, items]) => (
         <section key={cat} className="mb-5">
