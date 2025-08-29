@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-xl p-6">
       <div className="rounded-2xl bg-gray-900 text-white p-6 mb-6">
-        <h1 className="text-2xl font-bold">☕ Townie Cafe</h1>
+        <h1 className="text-2xl font-bold">☕ Townieee Cafe</h1>
         <p className="text-sm text-gray-200">Şube seçin ve menüyü görüntüleyin.</p>
       </div>
 
